@@ -28,6 +28,17 @@ $(function() {
 		}
 	});
 	
+
+
+function makeCall(url){
+				var response;
+				$.ajax({url:url,async:false,cache:false,dataType:"json",success:
+					function(data){
+						response = data;
+					}
+				});
+				return response;
+	}	
 	
 var boxMullerRandom = (function () {
     var phase = 0,
@@ -92,7 +103,8 @@ function generatePlots(howMany) {
     for (index = 0; index < howMany; index += 1) {
         plots.push({
             name: 'plot' + index,
-            data: getYValues(randomWalk())
+            data:  makeCall('http://localhost:5000/giveprices')
+
         });
     }
 
@@ -152,23 +164,6 @@ if (typeof randFunc !== 'function') {
    return newpt;
 }
 
-	   var controller = 'home';
-            var base_url = 'http://studygujarat.com'; //you have to load the "url_helper" to use this function ?>';
- 
-            function load_data_ajax(){
-                $.ajax({
-                    'url' : base_url + '/' + controller + '/getjson',
-                    'type' : 'POST', //the way you want to send data to your URL
-                    'success' : function(data){ //probably this request will return anything, it'll be put in var "data"
-                        var container = $('#ajax'); //jquery selector (get element by id)
-                        if(data){
-                            container.html(data);
-                        }
-                    }
-                });
-            }
-	
-	
 	
 // Create the chart
 	$('#container').highcharts('StockChart', {
@@ -190,15 +185,16 @@ if (typeof randFunc !== 'function') {
 					   
 						 var x = (new Date()).getTime(), // current time
 					   // var data2 = this.chart.yAxis[0].series[0].processedYData;
-						y3 = getnxtpt(x,endValue1);
-						y1 = getnxtpt(x,endValue2);
-						y2 = getnxtpt(x,endValue3);
+						y3 = makeCall('http://localhost:5000/givenext');
+ //getnxtpt(x,endValue1);
+						y1 = makeCall('http://localhost:5000/givenext'); //getnxtpt(x,endValue2);
+						y2 =  makeCall('http://localhost:5000/givenext'); //getnxtpt(x,endValue3);
 //						y =  lastpt * ( (Math.exp( (0.095/365) - 0.010*((Math.random()*2) - 1))));;
 						
 						
-						series.addPoint([x, y3], true, true);
-						series2.addPoint([x, y1], true, true);
-						series3.addPoint([x, y2], true, true);
+						series.addPoint([x, endValue1+y3[0]], true, true);
+						series2.addPoint([x, endValue2+ y1[0]], true, true);
+						series3.addPoint([x, endValue3+ y2[0]], true, true);
 
 
 							$('#report').html('<h5> Series1 =' + y3 + '</h5>'+ '</br>' + 
@@ -302,6 +298,8 @@ if (typeof randFunc !== 'function') {
 		series :generatePlots(3)		
 		  
 	});
+
+	
 	
 
 
