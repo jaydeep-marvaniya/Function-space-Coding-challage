@@ -1,1 +1,2 @@
-web: vendor/bin/heroku-php-apache2 webweb: node web.js
+web: vendor/bin/heroku-php-apache2 web
+worker: node web.js
