@@ -1,8 +1,12 @@
 var express = require("express");
 var logfmt = require("logfmt");
 var mathjs = require("mathjs");
+
+var $ = require("jquery");
 var app = express();
 math = mathjs();
+
+
 var boxMullerRandom = (function () {
     var phase = 0,
         RAND_MAX,
@@ -33,25 +37,49 @@ var boxMullerRandom = (function () {
 }());
 
 function randomWalk(steps, randFunc) {
-    steps = steps >>> 0 || 100;
+    steps = steps >>> 0 || 1000;
     if (typeof randFunc !== 'function') {
         randFunc = boxMullerRandom;
     }
 
     var points = [],
         value = 0,
-        t;
-		time = (new Date()).getTime()
+        t,
+		time = (new Date()).getTime();
     for (t = -steps; t <= 0; t++) {
-        value = value*Math.exp((0.50 + 0.02*randFunc()));
+        value = value + randFunc();
 		//value = randFunc();
-        points.push([ (time + 1000 * t),math.round(value,3)]);
+        points.push([ (time + 100 * t), math.round(value,3)]);
     }
 
     return points;
 }
 
-function getYValues(points) {
+    function getRandomData(numPoints, center, min, max, length ,variance,trend,noise)
+    {
+        var result = [];
+        var phase = Math.random() * Math.PI;
+        var y = center;
+        var increment;
+        var time =  (new Date()).getTime();
+        function randomPlusMinus() { return (Math.random() * 2) - 1; }
+        
+            increment = Math.PI / length;
+        
+        for (var i = -numPoints; i < 0; i++)
+        {
+                phase += increment * randomPlusMinus();
+                y += (Math.sin(phase) * (variance /length) * (randomPlusMinus() * noise)) + (trend / length);
+            
+            if (min) y = Math.max(y,min);
+            if (max) y = Math.min(y,max);
+            result.push([time + i * 1000, math.round(y,4)]);
+        }
+        
+        return result;
+    }
+	
+	function getYValues(points) {
     return points.map(function (point) {
        
 		return point[1];
@@ -60,7 +88,7 @@ function getYValues(points) {
 function getbothValues(points) {
     return points.map(function (point) {
        
-		return  [point[0], Math.abs(point[1])];
+		return  [point[0], point[1]];
     });
 }
 
@@ -129,14 +157,47 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/giveprices', function(req, res) {
-  res.send(getbothValues(randomWalk()));
+app.get('/giveprices1', function(req, res) {
+ // res.send(getbothValues(randomWalk()));
+//  res.json(getbothValues(getRandomData(365,req.params.price,20,100,365,req.params.ver,0,1)));
+  res.json(getbothValues(getRandomData(365,100,20,200,365,0.50,0,2)));
+ 
+});
+
+app.get('/giveprices2', function(req, res) {
+ // res.send(getbothValues(randomWalk()));
+//  res.json(getbothValues(getRandomData(365,req.params.price,20,100,365,req.params.ver,0,1)));
+  res.json(getbothValues(getRandomData(365,100,20,200,365,0.35,0,2)));
+ 
+});
+
+app.get('/giveprices3', function(req, res) {
+ // res.send(getbothValues(randomWalk()));
+//  res.json(getbothValues(getRandomData(365,req.params.price,20,100,365,req.params.ver,0,1)));
+  res.json(getbothValues(getRandomData(365,100,20,200,365,0.70,0,1)));
+ 
 });
 
 
-app.get('/givenext', function(req, res,lastpt) {
+app.get('/givenext1', function(req, res) {
 // res.json(getnxtpt(x,lastpt,randFunc));
- res.json(getYValues(randomWalk(1)));
+ //res.json(getYValues(getRandomData(365,req.params.price,20,100,365,req.params.ver,0,1)));
+ res.json(getYValues(getRandomData(365,100,20,200,365,0.50,0,1)));
+ 
+});
+
+app.get('/givenext2', function(req, res) {
+// res.json(getnxtpt(x,lastpt,randFunc));
+ //res.json(getYValues(getRandomData(365,req.params.price,20,100,365,req.params.ver,0,1)));
+ res.json(getYValues(getRandomData(365,100,20,200,365,0.35,0,1)));
+ 
+});
+
+app.get('/givenext3', function(req, res) {
+// res.json(getnxtpt(x,lastpt,randFunc));
+ //res.json(getYValues(getRandomData(365,req.params.price,20,100,365,req.params.ver,0,1)));
+ res.json(getYValues(getRandomData(365,100,20,200,365,0.70,0,1)));
+ 
 });
 
 

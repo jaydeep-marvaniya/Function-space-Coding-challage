@@ -52,7 +52,7 @@
 				plots.push({
 				name: 'company' + index,
 	
-				data:  makeCall('http://stocksim.herokuapp.com/giveprices1')
+				data:  makeCall('http://localhost:5000/giveprices1')
 					
 					});
 				}
@@ -61,7 +61,7 @@
 				plots.push({
 				name: 'company' + index,
 	
-				data:  makeCall('http://stocksim.herokuapp.com/giveprices2')
+				data:  makeCall('http://localhost:5000/giveprices2')
 					
 					});
 				}
@@ -70,7 +70,7 @@
 				plots.push({
 				name: 'company' + index,
 	
-				data:  makeCall('http://stocksim.herokuapp.com/giveprices3')
+				data:  makeCall('http://localhost:5000/giveprices3')
 					
 					});
 				}
@@ -79,23 +79,23 @@
 		return plots;
 	}
 
-	var y3 = makeCall('http://stocksim.herokuapp.com/givenext1');
+	var y3 = makeCall('http://localhost:5000/givenext1');
 					
-	var	y1 = makeCall('http://stocksim.herokuapp.com/givenext2'); //getnxtpt(x,endValue2);
-	var	y2 =  makeCall('http://stocksim.herokuapp.com/givenext3'); //getnxtpt(x,endValue3);
+	var	y1 = makeCall('http://localhost:5000/givenext2'); //getnxtpt(x,endValue2);
+	var	y2 =  makeCall('http://localhost:5000/givenext3'); //getnxtpt(x,endValue3);
 
 	function getnxtpt(i,c,ver,price)
 {
 		if((i==0) || (i==100) )
 	{
 
-		//	jay = "http://stocksim.herokuapp.com/givenext/" + ver + "/" + price;
+		//	jay = "http://localhost:5000/givenext/" + ver + "/" + price;
 
- if(c==1){		   y3 = makeCall('http://stocksim.herokuapp.com/givenext1');
+ if(c==1){		   y3 = makeCall('http://localhost:5000/givenext1');
 }
-if(c==2){		   y1 = makeCall('http://stocksim.herokuapp.com/givenext2');
+if(c==2){		   y1 = makeCall('http://localhost:5000/givenext2');
 }
-if(c==3){		   y2 = makeCall('http://stocksim.herokuapp.com/givenext3');
+if(c==3){		   y2 = makeCall('http://localhost:5000/givenext3');
 } 		
 	}	
 	
@@ -129,17 +129,17 @@ if(c==3){return y2[i];}
 							
 								
 								var x = (new Date()).getTime(), // current time
-							// var url="http://stocksim.herokuapp.com/givenext";
-						//	 var url='http://stocksim.herokuapp.com/givenext';
+							// var url="http://localhost:5000/givenext";
+						//	 var url='http://localhost:5000/givenext';
 							 
 						   // var data2 = this.chart.yAxis[0].series[0].processedYData;
    
 				 		y3new = getnxtpt(i,1,0.50,100);
 						y1new = getnxtpt(i,2,0.42,52);
 						y2new = getnxtpt(i,3,0.30,75);
-						//y3 = makeCall('http://stocksim.herokuapp.com/givenext'); //getnxtpt(x,endValue1);
-					//	y1 = makeCall('http://stocksim.herokuapp.com/givenext'); //getnxtpt(x,endValue2);
-						//y2 =  makeCall('http://stocksim.herokuapp.com/givenext'); //getnxtpt(x,endValue3);
+						//y3 = makeCall('http://localhost:5000/givenext'); //getnxtpt(x,endValue1);
+					//	y1 = makeCall('http://localhost:5000/givenext'); //getnxtpt(x,endValue2);
+						//y2 =  makeCall('http://localhost:5000/givenext'); //getnxtpt(x,endValue3);
 	//						y =  lastpt * ( (Math.exp( (0.095/365) - 0.010*((Math.random()*2) - 1))));;
 							//var x = (new Date()).getTime(), // current time
 						
