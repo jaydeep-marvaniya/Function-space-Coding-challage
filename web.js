@@ -1,8 +1,8 @@
 var express = require("express");
 var logfmt = require("logfmt");
-var math = require("mathjs");
+var mathjs = require("mathjs");
 var app = express();
-
+math = mathjs();
 var boxMullerRandom = (function () {
     var phase = 0,
         RAND_MAX,
@@ -41,12 +41,11 @@ function randomWalk(steps, randFunc) {
     var points = [],
         value = 0,
         t;
-		//time = (new Date()).getTime()
-
-    for (t = 0; t < steps; t += 1) {
-        value +=  randFunc();
+		time = (new Date()).getTime()
+    for (t = -steps; t <= 0; t++) {
+        value = value*Math.exp((0.50 + 0.02*randFunc()));
 		//value = randFunc();
-        points.push([t,value]);
+        points.push([ (time + 1000 * t),math.round(value,3)]);
     }
 
     return points;
@@ -54,9 +53,17 @@ function randomWalk(steps, randFunc) {
 
 function getYValues(points) {
     return points.map(function (point) {
-        return Math.abs(point[1]);
+       
+		return point[1];
     });
 }
+function getbothValues(points) {
+    return points.map(function (point) {
+       
+		return  [point[0], Math.abs(point[1])];
+    });
+}
+
 
 	function getnxtpt(x,lastpt,randFunc)
 {
@@ -78,6 +85,39 @@ if (typeof randFunc !== 'function') {
    return newpt;
 }
 
+function BlackScholes(PutCallFlag, S, X, T, r, v) {
+
+var d1, d2;
+d1 = (Math.log(S / X) + (r + v * v / 2.0) * T) / (v * Math.sqrt(T));
+d2 = d1 - v * Math.sqrt(T);
+
+
+if (PutCallFlag== "c")
+return S * CND(d1)-X * Math.exp(-r * T) * CND(d2);
+else
+return X * Math.exp(-r * T) * CND(-d2) - S * CND(-d1);
+
+}
+
+/* The cummulative Normal distribution function: */
+
+function CND(x){
+
+var a1, a2, a3, a4 ,a5, k ;
+
+a1 = 0.31938153, a2 =-0.356563782, a3 = 1.781477937, a4= -1.821255978 , a5= 1.330274429;
+
+if(x<0.0)
+return 1-CND(-x);
+else
+k = 1.0 / (1.0 + 0.2316419 * x);
+return 1.0 - Math.exp(-x * x / 2.0)/ Math.sqrt(2*Math.PI) * k
+* (a1 + k * (-0.356563782 + k * (1.781477937 + k * (-1.821255978 + k * 1.330274429)))) ;
+
+}
+
+
+
 
 
 app.use(logfmt.requestLogger());
@@ -85,19 +125,16 @@ app.use(express.static('public'))
 
 app.get('/', function(req, res) {
   
-//  res.send('  HEllo World ');
   res.redirect('simulatorNew.html');
 });
 
 
 app.get('/giveprices', function(req, res) {
- //res.send('Hello World!');
-  res.json(getYValues(randomWalk()));
+  res.send(getbothValues(randomWalk()));
 });
 
 
 app.get('/givenext', function(req, res,lastpt) {
- //res.send('Hello World!');
 // res.json(getnxtpt(x,lastpt,randFunc));
  res.json(getYValues(randomWalk(1)));
 });
